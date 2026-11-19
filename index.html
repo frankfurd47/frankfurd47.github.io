@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>...</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000000;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #password-input {
+      background-color: #000000;
+      color: #ffffff;
+      border: 1px solid #444444;
+      padding: 10px 14px;
+      font-size: 16px;
+      font-family: monospace;
+      text-align: center;
+      outline: none;
+      width: 260px;
+      z-index: 100;
+      transition: border-color 0.2s;
+    }
+
+    #password-input:focus {
+      border-color: #ffffff;
+    }
+
+    .eye {
+      position: absolute;
+      pointer-events: none;
+      mix-blend-mode: screen; /* Blends the black background of the GIF seamlessly */
+      opacity: 0;
+      transition: opacity 0.8s ease-in;
+    }
+  </style>
+</head>
+<body>
+
+  <input type="text" id="password-input" autocomplete="off" spellcheck="false" autofocus>
+
+  <script>
+    const input = document.getElementById('password-input');
+    const gifUrl = "https://images.steamusercontent.com/ugc/943969654201524308/484D5F6A2AD6381EA860E7A73814724D555ACACA/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false";
+    
+    // Clean hidden characters so standard typing matches cleanly
+    const cleanText = (str) => str.replace(/[\uFE00-\uFE0F]/g, '').trim();
+    const targetPassword = cleanText("As︎ Ab︎o︎v︎e︎ So︎ Bel︎o︎w︎");
+
+    let triggered = false;
+
+    input.addEventListener('input', () => {
+      if (triggered) return;
+
+      if (cleanText(input.value) === targetPassword) {
+        triggered = true;
+        input.style.display = 'none';
+        spawnEyes(45); // Number of eyes to spawn
+      }
+    });
+
+    function spawnEyes(count) {
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const img = document.createElement('img');
+          img.src = gifUrl;
+          img.className = 'eye';
+
+          // Randomize size between 60px and 180px
+          const size = Math.floor(Math.random() * 120) + 60;
+          img.style.width = `${size}px`;
+
+          // Randomize position across the screen
+          const maxX = window.innerWidth - size;
+          const maxY = window.innerHeight - (size * 0.75);
+          const randomX = Math.max(0, Math.floor(Math.random() * maxX));
+          const randomY = Math.max(0, Math.floor(Math.random() * maxY));
+
+          img.style.left = `${randomX}px`;
+          img.style.top = `${randomY}px`;
+
+          document.body.appendChild(img);
+
+          // Trigger fade-in slightly after adding to DOM
+          requestAnimationFrame(() => {
+            img.style.opacity = '1';
+          });
+        }, i * 60); // Staggers appearance slightly for an eerie effect
+      }
+    }
+  </script>
+
+</body>
+</html>
